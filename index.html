@@ -1,146 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Water Safety Checker / నీటి సురక్షత చెకర్</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #f0f2f5;
-      margin:0; padding:20px;
-    }
-    .card {
-      background:#fff; 
-      padding:25px; 
-      border-radius:10px; 
-      max-width:600px; 
-      margin:auto; 
-      box-shadow:0 5px 15px rgba(0,0,0,0.2);
-    }
-    h2 { text-align:center; margin-bottom:20px;}
-    label { display:block; margin-top:15px; font-weight:600; }
-    input, select { width:100%; padding:10px; margin-top:5px; border-radius:5px; border:1px solid #ccc; font-size:16px; }
-    small { font-size:0.9em; color:#555; }
-    button { margin-top:20px; width:100%; padding:12px; border:none; border-radius:5px; background:#007BFF; color:#fff; font-size:18px; cursor:pointer; transition:0.3s;}
-    button:hover { background:#0056b3; }
-    #result { margin-top:20px; padding:15px; border-radius:5px; white-space:pre-line; font-weight:600;}
-    .thankyou { text-align:center; font-weight:600; font-size:16px; margin-top:30px; color:#007BFF; }
-    hr { margin-top:30px; margin-bottom:20px; border:1px solid #ccc; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Water Safety Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+            text-align: center;
+            padding: 30px;
+        }
+        h1 {
+            color: #333;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            width: 150px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #solution {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .safe {
+            color: green;
+        }
+        .unsafe {
+            color: red;
+        }
+        #thankyou {
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
-<div class="card">
-  <h2>Water Safety Checker / నీటి సురక్షత చెకర్</h2>
+    <h1>Water Safety Checker / నీటి భద్రతా చెకర్</h1>
 
-  <label>Language / భాష:</label>
-  <select id="lang">
-    <option value="en">English</option>
-    <option value="te">తెలుగు</option>
-  </select>
+    <p>Enter the water parameters / నీటి ప్రమాణాలు నమోదు చేయండి:</p>
 
-  <!-- pH -->
-  <label>pH Value / pH విలువ:</label>
-  <input type="number" step="0.1" id="phInput" placeholder="Enter pH (6.5–8.5)">
-  <small>Or select option below / లేకా క్రిందని ఎంచుకోండి</small>
-  <select id="phOption">
-    <option value="">--Select pH Level--</option>
-    <option value="acidic">Acidic / ఆమ్లీయ</option>
-    <option value="neutral">Neutral / తటస్థం</option>
-    <option value="alkaline">Alkaline / క్షార</option>
-  </select>
+    <input type="number" id="ph" placeholder="pH" step="0.1"><br>
+    <input type="number" id="tds" placeholder="TDS (mg/L)"><br>
+    <input type="number" id="turbidity" placeholder="Turbidity (NTU)"><br>
+    <input type="number" id="temperature" placeholder="Temperature (°C)"><br>
 
-  <!-- TDS -->
-  <label>TDS (ppm):</label>
-  <input type="number" id="tdsInput" placeholder="Enter TDS (ppm)">
-  <small>Or select option below / లేకా క్రిందని ఎంచుకోండి</small>
-  <select id="tdsOption">
-    <option value="">--Select TDS Level--</option>
-    <option value="low">Low / తక్కువ (0–300)</option>
-    <option value="medium">Medium / మధ్య (301–500)</option>
-    <option value="high">High / ఎక్కువ (>500)</option>
-  </select>
+    <select id="waterType">
+        <option value="">Select Water Type / నీటి రకం</option>
+        <option value="tap">Tap Water / టాప్ వాటర్</option>
+        <option value="filter">Filtered Water / ఫిల్టర్డ్ వాటర్</option>
+        <option value="borewell">Borewell / బోరువెల్</option>
+        <option value="hot">Hot Water / వేడి నీరు</option>
+    </select><br>
 
-  <!-- Turbidity -->
-  <label>Turbidity (NTU) / మబ్బుతనం:</label>
-  <input type="number" step="0.1" id="turbInput" placeholder="Enter Turbidity">
-  <small>Or select option below / లేకా క్రిందని ఎంచుకోండి</small>
-  <select id="turbOption">
-    <option value="">--Select Turbidity Level--</option>
-    <option value="low">Low / తక్కువ (≤5)</option>
-    <option value="high">High / ఎక్కువ (>5)</option>
-  </select>
+    <button onclick="checkWater()">Check Water / నీరు పరిశీలించండి</button>
 
-  <!-- Temperature -->
-  <label>Temperature (°C) / ఉష్ణోగ్రత:</label>
-  <input type="number" step="1" id="tempInput" placeholder="Enter Temperature">
-  <select id="tempOption">
-    <option value="">--Select Temperature--</option>
-    <option value="cold">Cold / చల్ల (<10°C)</option>
-    <option value="normal">Normal / సాధారణ (10–50°C)</option>
-    <option value="hot">Hot / వేడి (>50°C)</option>
-  </select>
+    <p id="solution"></p>
+    <p id="thankyou">Thank You / ధన్యవాదాలు</p>
 
-  <button onclick="checkWater()">Check Water / నీరు పరీక్షించండి</button>
+    <script>
+        function checkWater() {
+            var phInput = document.getElementById("ph").value;
+            var tdsInput = document.getElementById("tds").value;
+            var turbidityInput = document.getElementById("turbidity").value;
+            var temperatureInput = document.getElementById("temperature").value;
+            var waterType = document.getElementById("waterType").value;
 
-  <p id="result"></p>
+            var message = "";
 
-  <hr>
-  <p class="thankyou">Thank You! 🙏 / ధన్యవాదాలు!</p>
-</div>
+            // pH check
+            if(phInput !== "") {
+                var ph = parseFloat(phInput);
+                if(ph >= 6.5 && ph <= 8.5) {
+                    message += "<span class='safe'>pH: Safe / పీహెచ్: సురక్షితం</span><br>";
+                } else {
+                    message += "<span class='unsafe'>pH: Not safe / పీహెచ్: సురక్షితం కాదు</span><br>";
+                    message += "<span class='unsafe'>Water not safe! Consider boiling / నీరు సురక్షితం కాదు! మరిగించి తాగండి</span><br>";
+                }
+            }
 
-<script>
-function checkWater() {
-  const lang = document.getElementById('lang').value;
-  const phInput = parseFloat(document.getElementById('phInput').value);
-  const phOption = document.getElementById('phOption').value;
-  const tdsInput = parseFloat(document.getElementById('tdsInput').value);
-  const tdsOption = document.getElementById('tdsOption').value;
-  const turbInput = parseFloat(document.getElementById('turbInput').value);
-  const turbOption = document.getElementById('turbOption').value;
-  const tempInput = parseFloat(document.getElementById('tempInput').value);
-  const tempOption = document.getElementById('tempOption').value;
-  const result = document.getElementById('result');
-  let msg = '';
-  let safeCount = 0;
+            // TDS check
+            if(tdsInput !== "") {
+                var tds = parseFloat(tdsInput);
+                if(tds <= 500) {
+                    message += "<span class='safe'>TDS: Safe / టిడిఎస్: సురక్షితం</span><br>";
+                } else {
+                    message += "<span class='unsafe'>TDS: Not safe / టిడిఎస్: సురక్షితం కాదు</span><br>";
+                    message += "<span class='unsafe'>Consider using a water filter / ఫిల్టర్ ఉపయోగించండి</span><br>";
+                    message += "<span class='unsafe'>Water not safe! Consider boiling / నీరు సురక్షితం కాదు! మరిగించి తాగండి</span><br>";
+                }
+            }
 
-  // --- pH check ---
-  let phVal = !isNaN(phInput) ? phInput : null;
-  if(!phVal && phOption) phVal = phOption==='acidic'?6 : phOption==='neutral'?7.5:9;
-  if(phVal >=6.5 && phVal <=8.5) { msg += (lang==='en') ? "pH: Safe ✅\n" : "pH: భద్రంగా ✅\n"; safeCount++; }
-  else if(phVal <6.5){ msg += (lang==='en') ? "pH: Unsafe ❌ Acidic. Boil/heat water before drinking or use RO filter.\n"
-                         : "pH: భద్రంగా కాదు ❌ ఆమ్లీయ. తాగేముందు నీటిని మరిగించండి / RO ఫిల్టర్ వాడండి.\n"; }
-  else { msg += (lang==='en') ? "pH: Unsafe ❌ Alkaline. Mix with distilled water or boil/heat water before drinking.\n"
-                         : "pH: భద్రంగా కాదు ❌ క్షార. డిస్టిల్డ్ వాటర్ తో కలపండి లేదా తాగేముందు మరిగించండి / వేడి చేయండి.\n"; }
+            // Turbidity check
+            if(turbidityInput !== "") {
+                var turbidity = parseFloat(turbidityInput);
+                if(turbidity <= 5) {
+                    message += "<span class='safe'>Turbidity: Safe / టర్బిడిటీ: సురక్షితం</span><br>";
+                } else {
+                    message += "<span class='unsafe'>Turbidity: Not safe / టర్బిడిటీ: సురక్షితం కాదు</span><br>";
+                    message += "<span class='unsafe'>Water not safe! Consider boiling / నీరు సురక్షితం కాదు! మరిగించి తాగండి</span><br>";
+                }
+            }
 
-  // --- TDS check ---
-  let tdsVal = !isNaN(tdsInput) ? tdsInput : null;
-  if(!tdsVal && tdsOption) tdsVal = tdsOption==='low'?200: tdsOption==='medium'?400:600;
-  if(tdsVal <=500) { msg += (lang==='en') ? "TDS: Safe ✅\n" : "TDS: భద్రంగా ✅\n"; safeCount++; }
-  else { msg += (lang==='en') ? "TDS: High ❌. Use RO / filtered water.\n" : "TDS: ఎక్కువ ❌. RO / ఫిల్టర్ చేసిన నీరు వాడండి.\n"; }
+            // Hot water advice
+            if(waterType === "hot") {
+                message += "<span class='safe'>Hot water selected / వేడి నీరు ఎంచుకున్నారు</span><br>";
+                if(temperatureInput !== "" && parseFloat(temperatureInput) > 60) {
+                    message += "<span class='unsafe'>Too hot! Let it cool / చాలా వేడి! చల్లార్చి తాగండి</span><br>";
+                }
+            }
 
-  // --- Turbidity check ---
-  let turbVal = !isNaN(turbInput) ? turbInput : null;
-  if(!turbVal && turbOption) turbVal = turbOption==='low'?3:7;
-  if(turbVal <=5) { msg += (lang==='en') ? "Turbidity: Safe ✅\n" : "మబ్బుతనం: భద్రంగా ✅\n"; safeCount++; }
-  else { msg += (lang==='en') ? "Turbidity: High ❌. Boil & filter water before use.\n" : "మబ్బుతనం: ఎక్కువ ❌. తాగేముందు నీటిని మరిగించండి మరియు ఫిల్టర్ చేయండి.\n"; }
+            // Extra advices (Storage & Daily intake)
+            if(phInput !== "" || tdsInput !== "" || turbidityInput !== "") {
+                message += "<span class='safe'>Store water in a clean container / నీటిని శుభ్రమైన కంటైనర్‌లో ఉంచండి</span><br>";
+                if(temperatureInput !== "") {
+                    var temp = parseFloat(temperatureInput);
+                    if(temp < 10) {
+                        message += "<span class='safe'>Cold water, safe to drink / చల్లని నీరు, తాగడానికి సురక్షితం</span><br>";
+                    } else if(temp > 60) {
+                        message += "<span class='unsafe'>Too hot! Let it cool / చాలా వేడి! చల్లార్చి తాగండి</span><br>";
+                    }
+                }
+                message += "<span class='safe'>Drink at least 2-3 liters daily / రోజుకు కనీసం 2-3 లీటర్ల నీరు తాగండి</span><br>";
+            }
 
-  // --- Temperature check ---
-  let tempVal = !isNaN(tempInput) ? tempInput : null;
-  if(!tempVal && tempOption) tempVal = tempOption==='cold'?5:tempOption==='normal'?25:55;
-  if(tempVal>=10 && tempVal<=50) { msg += (lang==='en') ? "Temperature: Safe ✅\n" : "ఉష్ణోగ్రత: భద్రంగా ✅\n"; safeCount++; }
-  else if(tempVal>50) { msg += (lang==='en') ? "Temperature: Too hot ❌. Cool before drinking.\n" : "ఉష్ణోగ్రత: ఎక్కువ వేడి ❌. తాగేముందు చల్లగా చేయండి.\n"; }
-  else { msg += (lang==='en') ? "Temperature: Too cold ❌. Warm before use.\n" : "ఉష్ణోగ్రత: చాలా చల్ల ❌. ఉపయోగానికి ముందే వేడి చేయండి.\n"; }
+            // If all entered values are safe
+            if(message === "") {
+                message = "<span class='safe'>Water is safe to drink / నీరు తాగడానికి సురక్షితం</span><br>";
+            }
 
-  // --- Color coding ---
-  if(safeCount ===4){ result.style.backgroundColor = "#d4edda"; result.style.color = "#155724"; }
-  else if(safeCount >=2){ result.style.backgroundColor = "#fff3cd"; result.style.color = "#856404"; }
-  else{ result.style.backgroundColor = "#f8d7da"; result.style.color = "#721c24"; }
-
-  result.textContent = msg;
-}
-</script>
+            document.getElementById("solution").innerHTML = message;
+        }
+    </script>
 
 </body>
 </html>
